@@ -1,0 +1,24 @@
+{
+  "id": "soil_moisture_v12",
+  "name": "Capacitive Soil Moisture Sensor v1.2",
+  "category": "sensor",
+  "description": "Capacitive soil moisture sensor v1.2 — outputs an analog voltage inversely proportional to soil moisture. No corrosion vs. resistive probes.",
+  "interface": "adc",
+  "supply_voltage": 3.3,
+  "logic_voltage": 3.3,
+  "pins": [
+    { "name": "VCC", "role": "vcc" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "AOUT", "role": "adc", "notes": "Analog output: ~3.3V in dry air, ~1.2V submerged. Map to 0–100% moisture." }
+  ],
+  "measurements": [
+    { "name": "moisture", "unit": "%", "range_min": 0, "range_max": 100 }
+  ],
+  "min_read_interval_ms": 500,
+  "library": {
+    "platformio_id": "None — read directly with analogRead()",
+    "version": "TODO: verify"
+  },
+  "notes": "Must use an ADC1 pin (GPIO32–39) when WiFi is enabled — ADC2 pins are disabled by the WiFi driver. The raw reading needs calibration: dry air value (~3.3V / 4095 counts) maps to 0% moisture; submerged value (~1.2V) maps to 100%. These thresholds vary by sensor unit.",
+  "datasheet_url": "TODO: verify"
+}

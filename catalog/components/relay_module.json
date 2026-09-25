@@ -1,0 +1,22 @@
+{
+  "id": "relay_module",
+  "name": "Relay Module (single channel, 5V coil)",
+  "category": "actuator",
+  "description": "Generic single-channel relay module with optocoupler isolation. 5V coil, controlled by a 3.3V-compatible GPIO signal.",
+  "interface": "gpio",
+  "supply_voltage": 5.0,
+  "logic_voltage": 3.3,
+  "pins": [
+    { "name": "VCC", "role": "vcc", "notes": "Power for the relay coil — must be 5V" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "IN",  "role": "gpio_out", "notes": "Control signal from ESP32 GPIO. Active LOW on most modules (LOW energizes the relay)." }
+  ],
+  "measurements": [],
+  "min_read_interval_ms": 0,
+  "library": {
+    "platformio_id": "None — controlled with digitalWrite()",
+    "version": "TODO: verify"
+  },
+  "notes": "The coil requires 5V — power from the DevKit's 5V (VIN) pin. The IN signal is 3.3V-compatible via the optocoupler on most modules. Most modules are ACTIVE LOW: writing LOW energizes the relay. Verify the active level for your specific module before wiring.",
+  "datasheet_url": "TODO: verify"
+}

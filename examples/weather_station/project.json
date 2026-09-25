@@ -1,0 +1,79 @@
+{
+  "board": "esp32dev",
+  "components": [
+    {
+      "instance_id": "bme280_1",
+      "catalog_id": "bme280",
+      "bus_id": "i2c0",
+      "i2c_address": 118,
+      "pin_mapping": {
+        "i2c_sda": 21,
+        "i2c_scl": 22
+      }
+    },
+    {
+      "instance_id": "bh1750_1",
+      "catalog_id": "bh1750",
+      "bus_id": "i2c0",
+      "i2c_address": 35,
+      "pin_mapping": {
+        "i2c_sda": 21,
+        "i2c_scl": 22
+      }
+    },
+    {
+      "instance_id": "ssd1306_1",
+      "catalog_id": "ssd1306",
+      "bus_id": "i2c0",
+      "i2c_address": 60,
+      "pin_mapping": {
+        "i2c_sda": 21,
+        "i2c_scl": 22
+      }
+    }
+  ],
+  "buses": {
+    "i2c0": {
+      "sda": 21,
+      "scl": 22,
+      "frequency": 400000
+    }
+  },
+  "screen": {
+    "instance_id": "ssd1306_1",
+    "driver": "ssd1306",
+    "widgets": [
+      {
+        "id": "temp_label",
+        "type": "label",
+        "binding": "bme280_1.temperature",
+        "label": "Temp",
+        "unit": "°C",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "hum_label",
+        "type": "label",
+        "binding": "bme280_1.humidity",
+        "label": "Hum",
+        "unit": "%",
+        "x": 0,
+        "y": 16
+      },
+      {
+        "id": "light_label",
+        "type": "label",
+        "binding": "bh1750_1.light",
+        "label": "Light",
+        "unit": "lux",
+        "x": 0,
+        "y": 32
+      }
+    ]
+  },
+  "app": {
+    "wifi": false,
+    "serial_logging": true
+  }
+}

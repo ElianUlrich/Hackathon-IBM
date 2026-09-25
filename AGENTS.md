@@ -17,7 +17,7 @@ Last ~6 hours reserved for README, video and submission — no new features then
 | Phase | Deliverable | Status |
 |-------|-------------|--------|
 | 0 | Approved plan + `AGENTS.md` | ✅ Done |
-| 1 | Schemas, pin table, catalog, `validate_project.py`, `build.py` | ⬜ Pending |
+| 1 | Schemas, pin table, catalog, `validate_project.py`, `build.py` | ✅ Done |
 | 2 | Custom modes, rules and skills in `.bob/` | ⬜ Pending |
 | 3 | Web app v1 → deployed to GitHub Pages | ⬜ Pending |
 | 4 | Firmware generation for Demo 1 and Demo 2 — both must compile | ⬜ Pending |

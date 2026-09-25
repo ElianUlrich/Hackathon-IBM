@@ -1,0 +1,24 @@
+{
+  "id": "ds18b20",
+  "name": "DS18B20",
+  "category": "sensor",
+  "description": "Maxim DS18B20 — digital 1-Wire temperature sensor, addressable. Multiple sensors can share one GPIO.",
+  "interface": "onewire",
+  "supply_voltage": 3.3,
+  "logic_voltage": 3.3,
+  "pins": [
+    { "name": "VDD", "role": "vcc" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "DQ",  "role": "onewire", "notes": "1-Wire data line. Requires 4.7kΩ pull-up resistor to VCC." }
+  ],
+  "measurements": [
+    { "name": "temperature", "unit": "°C", "range_min": -55, "range_max": 125 }
+  ],
+  "min_read_interval_ms": 750,
+  "library": {
+    "platformio_id": "paulstoffregen/OneWire",
+    "version": "TODO: verify"
+  },
+  "notes": "Requires a 4.7kΩ pull-up resistor between DQ and VCC — the ESP32 internal pull-up is too weak for reliable 1-Wire communication. The DallasTemperature library wraps OneWire for convenience; both must be in lib_deps. Temperature conversion at 12-bit resolution takes up to 750 ms — do not use delay(); use non-blocking requestTemperatures() + isConversionComplete().",
+  "datasheet_url": "https://datasheets.maximintegrated.com/en/ds/DS18B20.pdf"
+}

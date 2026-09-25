@@ -1,0 +1,143 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "catalog/component.schema.json",
+  "title": "PinPilot Component Catalog Entry",
+  "description": "Schema for a single component entry in the PinPilot catalog.",
+  "type": "object",
+  "required": ["id", "name", "category", "description", "interface", "supply_voltage", "logic_voltage", "pins", "min_read_interval_ms", "library"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*$",
+      "description": "snake_case unique identifier, e.g. bme280"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable display name, e.g. BME280"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["sensor", "actuator", "display", "audio"],
+      "description": "Component category"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of what the component does"
+    },
+    "interface": {
+      "type": "string",
+      "enum": ["i2c", "spi", "uart", "i2s", "gpio", "adc", "onewire", "pwm"],
+      "description": "Primary bus or interface type"
+    },
+    "supply_voltage": {
+      "type": "number",
+      "description": "Operating supply voltage in volts (e.g. 3.3 or 5.0)"
+    },
+    "logic_voltage": {
+      "type": "number",
+      "description": "Logic level voltage in volts. Used to detect 5V parts needing level shifting."
+    },
+    "i2c_addresses": {
+      "type": "object",
+      "description": "Only present for i2c interface components.",
+      "required": ["default"],
+      "properties": {
+        "default": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 127,
+          "description": "Default 7-bit I2C address as integer"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["address", "how"],
+            "properties": {
+              "address": { "type": "integer", "minimum": 0, "maximum": 127 },
+              "how": { "type": "string", "description": "How to select this address, e.g. SDO to GND" }
+            }
+          }
+        }
+      }
+    },
+    "pins": {
+      "type": "array",
+      "description": "List of component-side pins and their roles",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "role"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "description": "Pin label on the component (e.g. SDA, VCC)" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "vcc", "gnd",
+              "i2c_sda", "i2c_scl",
+              "spi_mosi", "spi_miso", "spi_sck", "spi_cs",
+              "gpio_in", "gpio_out",
+              "adc",
+              "onewire",
+              "uart_tx", "uart_rx",
+              "i2s_bck", "i2s_ws", "i2s_data",
+              "pwm"
+            ],
+            "description": "Functional role of this pin"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Optional wiring note for this specific pin"
+          }
+        }
+      }
+    },
+    "measurements": {
+      "type": "array",
+      "description": "Values this component provides; used for screen widget bindings.",
+      "items": {
+        "type": "object",
+        "required": ["name", "unit"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "description": "Measurement key, e.g. temperature" },
+          "unit": { "type": "string", "description": "Unit string, e.g. °C" },
+          "range_min": { "type": "number" },
+          "range_max": { "type": "number" }
+        }
+      }
+    },
+    "min_read_interval_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Minimum time between sensor reads in milliseconds"
+    },
+    "library": {
+      "type": "object",
+      "description": "PlatformIO library dependency for this component",
+      "required": ["platformio_id", "version"],
+      "additionalProperties": false,
+      "properties": {
+        "platformio_id": {
+          "type": "string",
+          "description": "Library identifier as used in lib_deps, e.g. adafruit/Adafruit BME280 Library"
+        },
+        "version": {
+          "type": "string",
+          "description": "Pinned version string or TODO: verify"
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Wiring tips: pull-ups, level shifting, power, etc."
+    },
+    "datasheet_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL to the component datasheet"
+    }
+  }
+}

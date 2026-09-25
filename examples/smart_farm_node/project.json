@@ -1,0 +1,118 @@
+{
+  "board": "esp32dev",
+  "components": [
+    {
+      "instance_id": "soil_1",
+      "catalog_id": "soil_moisture_v12",
+      "pin_mapping": {
+        "adc": 34
+      }
+    },
+    {
+      "instance_id": "ds18b20_1",
+      "catalog_id": "ds18b20",
+      "pin_mapping": {
+        "onewire": 4
+      }
+    },
+    {
+      "instance_id": "bme280_1",
+      "catalog_id": "bme280",
+      "bus_id": "i2c0",
+      "i2c_address": 118,
+      "pin_mapping": {
+        "i2c_sda": 21,
+        "i2c_scl": 22
+      }
+    },
+    {
+      "instance_id": "relay_1",
+      "catalog_id": "relay_module",
+      "pin_mapping": {
+        "gpio_out": 26
+      }
+    },
+    {
+      "instance_id": "ili9341_1",
+      "catalog_id": "ili9341",
+      "bus_id": "spi0",
+      "pin_mapping": {
+        "spi_mosi": 23,
+        "spi_miso": 19,
+        "spi_sck":  18,
+        "spi_cs":   5,
+        "gpio_out": 17
+      },
+      "parameters": {
+        "dc_pin":  16,
+        "rst_pin": 17
+      }
+    }
+  ],
+  "buses": {
+    "i2c0": {
+      "sda": 21,
+      "scl": 22,
+      "frequency": 400000
+    },
+    "spi0": {
+      "mosi": 23,
+      "miso": 19,
+      "sck":  18,
+      "frequency": 40000000
+    }
+  },
+  "screen": {
+    "instance_id": "ili9341_1",
+    "driver": "ili9341",
+    "widgets": [
+      {
+        "id": "moisture_arc",
+        "type": "arc",
+        "binding": "soil_1.moisture",
+        "label": "Moisture",
+        "unit": "%",
+        "x": 10,
+        "y": 40,
+        "width": 100,
+        "height": 100,
+        "min": 0,
+        "max": 100
+      },
+      {
+        "id": "temp_label",
+        "type": "value",
+        "binding": "bme280_1.temperature",
+        "label": "Temp",
+        "unit": "°C",
+        "x": 160,
+        "y": 20
+      },
+      {
+        "id": "soil_temp_label",
+        "type": "value",
+        "binding": "ds18b20_1.temperature",
+        "label": "Soil T",
+        "unit": "°C",
+        "x": 160,
+        "y": 80
+      },
+      {
+        "id": "moisture_chart",
+        "type": "chart",
+        "binding": "soil_1.moisture",
+        "label": "Moisture history",
+        "x": 0,
+        "y": 160,
+        "width": 320,
+        "height": 70,
+        "min": 0,
+        "max": 100
+      }
+    ]
+  },
+  "app": {
+    "wifi": true,
+    "serial_logging": true
+  }
+}

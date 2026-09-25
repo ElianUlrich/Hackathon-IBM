@@ -1,0 +1,276 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "ESP32 DevKit (WROOM-32) GPIO capability table. Single source of truth for the web app and validate_project.py. Only GPIOs that physically exist are listed: 0-19, 21-23, 25-27, 32-39. GPIOs 20, 24, 28-31 do not exist on this chip and are intentionally omitted.",
+  "0": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["strapping"],
+    "notes": "Strapping pin: must be HIGH at boot (pulled high by internal pull-up). Boot fails if held LOW."
+  },
+  "1": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["uart0_usb"],
+    "notes": "UART0 TX — used by USB serial. Avoid for other functions when serial logging is enabled."
+  },
+  "2": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["strapping", "adc2_wifi_conflict"],
+    "notes": "Strapping pin: must be LOW or floating at boot. Also ADC2 channel 2 — unavailable when WiFi is active."
+  },
+  "3": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["uart0_usb"],
+    "notes": "UART0 RX — used by USB serial. Avoid for other functions when serial logging is enabled."
+  },
+  "4": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 0 — unavailable when WiFi is active."
+  },
+  "5": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": ["strapping"],
+    "notes": "Strapping pin: controls SDIO slave timing. Must be HIGH at boot."
+  },
+  "6": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "7": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "8": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "9": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "10": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "11": {
+    "input": false, "output": false,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["flash"],
+    "notes": "Connected to internal SPI flash — must not be used."
+  },
+  "12": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["strapping", "adc2_wifi_conflict"],
+    "notes": "Strapping pin: MTDI. If pulled HIGH at boot it selects 1.8V flash voltage and breaks boot on most DevKits. ADC2 channel 5."
+  },
+  "13": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 4 — unavailable when WiFi is active."
+  },
+  "14": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 6 — unavailable when WiFi is active. Also outputs PWM signal at boot."
+  },
+  "15": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["strapping", "adc2_wifi_conflict"],
+    "notes": "Strapping pin: MTDO, controls debug print at boot. ADC2 channel 3."
+  },
+  "16": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default UART2 RX. Good general-purpose I/O."
+  },
+  "17": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default UART2 TX. Good general-purpose I/O."
+  },
+  "18": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default VSPI SCK."
+  },
+  "19": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default VSPI MISO."
+  },
+  "21": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default I2C SDA."
+  },
+  "22": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default I2C SCL."
+  },
+  "23": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "Default VSPI MOSI."
+  },
+  "25": {
+    "input": true, "output": true,
+    "adc1": true, "adc2": false,
+    "dac": true, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "ADC1 channel 8. DAC channel 1."
+  },
+  "26": {
+    "input": true, "output": true,
+    "adc1": true, "adc2": false,
+    "dac": true, "touch": false,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "ADC1 channel 9. DAC channel 2."
+  },
+  "27": {
+    "input": true, "output": true,
+    "adc1": false, "adc2": true,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 7 — unavailable when WiFi is active."
+  },
+  "32": {
+    "input": true, "output": true,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "ADC1 channel 4. Good for analog sensors."
+  },
+  "33": {
+    "input": true, "output": true,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": true,
+    "pullup": true, "pulldown": true,
+    "flags": [],
+    "notes": "ADC1 channel 5. Good for analog sensors."
+  },
+  "34": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 6."
+  },
+  "35": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 7."
+  },
+  "36": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only (VP). No internal pull-up or pull-down. ADC1 channel 0."
+  },
+  "37": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 1."
+  },
+  "38": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 2."
+  },
+  "39": {
+    "input": true, "output": false,
+    "adc1": true, "adc2": false,
+    "dac": false, "touch": false,
+    "pullup": false, "pulldown": false,
+    "flags": ["input_only"],
+    "notes": "Input-only (VN). No internal pull-up or pull-down. ADC1 channel 3."
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "id": "bme280",
+  "name": "BME280",
+  "category": "sensor",
+  "description": "Bosch BME280 — combined temperature, humidity and barometric pressure sensor via I2C or SPI. PinPilot uses I2C mode.",
+  "interface": "i2c",
+  "supply_voltage": 3.3,
+  "logic_voltage": 3.3,
+  "i2c_addresses": {
+    "default": 118,
+    "alternatives": [
+      { "address": 119, "how": "Connect SDO pin to VCC (3.3V) to select 0x77" }
+    ]
+  },
+  "pins": [
+    { "name": "VCC", "role": "vcc" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "SDA", "role": "i2c_sda" },
+    { "name": "SCL", "role": "i2c_scl" }
+  ],
+  "measurements": [
+    { "name": "temperature", "unit": "°C", "range_min": -40, "range_max": 85 },
+    { "name": "humidity",    "unit": "%",  "range_min": 0,   "range_max": 100 },
+    { "name": "pressure",    "unit": "hPa","range_min": 300, "range_max": 1100 }
+  ],
+  "min_read_interval_ms": 1000,
+  "library": {
+    "platformio_id": "adafruit/Adafruit BME280 Library",
+    "version": "TODO: verify"
+  },
+  "notes": "3.3V device — do not connect to 5V supply. SDO to GND selects address 0x76 (default); SDO to VCC selects 0x77. The breakout board usually includes pull-ups on SDA/SCL; a second device on the bus does not need more pull-ups.",
+  "datasheet_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"
+}

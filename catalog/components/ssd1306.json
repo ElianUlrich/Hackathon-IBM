@@ -1,0 +1,29 @@
+{
+  "id": "ssd1306",
+  "name": "SSD1306 OLED 128x64",
+  "category": "display",
+  "description": "Solomon Systech SSD1306 — monochrome 128×64 OLED display, I2C interface. Driven with U8g2 library.",
+  "interface": "i2c",
+  "supply_voltage": 3.3,
+  "logic_voltage": 3.3,
+  "i2c_addresses": {
+    "default": 60,
+    "alternatives": [
+      { "address": 61, "how": "Bridge SA0 solder jumper on breakout board to select 0x3D" }
+    ]
+  },
+  "pins": [
+    { "name": "VCC", "role": "vcc" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "SDA", "role": "i2c_sda" },
+    { "name": "SCL", "role": "i2c_scl" }
+  ],
+  "measurements": [],
+  "min_read_interval_ms": 0,
+  "library": {
+    "platformio_id": "olikraus/U8g2",
+    "version": "TODO: verify"
+  },
+  "notes": "3.3V device. Most breakout boards accept 3.3–5V supply but the logic is 3.3V — safe to connect directly to ESP32. Default I2C address is 0x3C; some modules hard-wire 0x3D. Use U8g2 constructor U8G2_SSD1306_128X64_NONAME_F_HW_I2C or the page-buffer variant to save RAM.",
+  "datasheet_url": "https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"
+}
