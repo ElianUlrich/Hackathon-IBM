@@ -118,3 +118,21 @@ build/
 # DO NOT REMOVE ABOVE PATTERNS
 # Add project-specific patterns below
 # ============================================
+# ============================================
+# PINPILOT — PROJECT-SPECIFIC PATTERNS
+# ============================================
+
+# Vite production build output
+web/dist/
+
+# PlatformIO toolchain and compiled objects
+.pio/
+
+# LaTeX build artefacts
+*.aux
+*.out
+*.toc
+*.synctex.gz
+
+# Generated firmware WiFi credentials — never commit
+secrets.h

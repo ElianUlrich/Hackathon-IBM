@@ -89,3 +89,15 @@ id_dsa
 # ============================================
 # DO NOT REMOVE ABOVE PATTERNS
 # ============================================
+# ============================================
+# PINPILOT — PROJECT-SPECIFIC PATTERNS
+# ============================================
+
+# Dependency and build directories
+node_modules/
+.pio/
+web/dist/
+build/
+
+# Datasheet PDFs (large binaries; load explicitly with add-component skill)
+docs/*.pdf
