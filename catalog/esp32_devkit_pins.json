@@ -1,21 +1,21 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$comment": "ESP32 DevKit (WROOM-32) GPIO capability table. Single source of truth for the web app and validate_project.py. Only GPIOs that physically exist are listed: 0-19, 21-23, 25-27, 32-39. GPIOs 20, 24, 28-31 do not exist on this chip and are intentionally omitted.",
+  "$comment": "ESP32 DevKit (WROOM-32) GPIO capability table. Single source of truth for the web app and validate_project.py. Only GPIOs physically broken out on WROOM-32/DevKit are listed: 0-19, 21-23, 25-27, 32-36, 39. GPIOs 20, 24, 28-31 do not exist; GPIOs 37 and 38 exist on the die but are NOT broken out on the WROOM-32 module or standard DevKit boards and are intentionally omitted.",
   "0": {
     "input": true, "output": true,
     "adc1": false, "adc2": true,
     "dac": false, "touch": true,
     "pullup": true, "pulldown": true,
-    "flags": ["strapping"],
-    "notes": "Strapping pin: must be HIGH at boot (pulled high by internal pull-up). Boot fails if held LOW."
+    "flags": ["strapping", "adc2_wifi_conflict"],
+    "notes": "Strapping pin: must be HIGH at boot (pulled high by internal pull-up). Boot fails if held LOW. Also ADC2 channel 1 — unavailable when WiFi is active."
   },
   "1": {
     "input": true, "output": true,
     "adc1": false, "adc2": false,
     "dac": false, "touch": false,
-    "pullup": false, "pulldown": false,
+    "pullup": true, "pulldown": true,
     "flags": ["uart0_usb"],
-    "notes": "UART0 TX — used by USB serial. Avoid for other functions when serial logging is enabled."
+    "notes": "UART0 TX — used by USB serial. Avoid for other functions when serial logging is enabled. Has internal pull-up and pull-down resistors."
   },
   "2": {
     "input": true, "output": true,
@@ -29,9 +29,9 @@
     "input": true, "output": true,
     "adc1": false, "adc2": false,
     "dac": false, "touch": false,
-    "pullup": false, "pulldown": false,
+    "pullup": true, "pulldown": true,
     "flags": ["uart0_usb"],
-    "notes": "UART0 RX — used by USB serial. Avoid for other functions when serial logging is enabled."
+    "notes": "UART0 RX — used by USB serial. Avoid for other functions when serial logging is enabled. Has internal pull-up and pull-down resistors."
   },
   "4": {
     "input": true, "output": true,
@@ -187,19 +187,19 @@
   },
   "25": {
     "input": true, "output": true,
-    "adc1": true, "adc2": false,
+    "adc1": false, "adc2": true,
     "dac": true, "touch": false,
     "pullup": true, "pulldown": true,
-    "flags": [],
-    "notes": "ADC1 channel 8. DAC channel 1."
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 8 — unavailable when WiFi is active. DAC channel 1."
   },
   "26": {
     "input": true, "output": true,
-    "adc1": true, "adc2": false,
+    "adc1": false, "adc2": true,
     "dac": true, "touch": false,
     "pullup": true, "pulldown": true,
-    "flags": [],
-    "notes": "ADC1 channel 9. DAC channel 2."
+    "flags": ["adc2_wifi_conflict"],
+    "notes": "ADC2 channel 9 — unavailable when WiFi is active. DAC channel 2."
   },
   "27": {
     "input": true, "output": true,
@@ -248,22 +248,6 @@
     "pullup": false, "pulldown": false,
     "flags": ["input_only"],
     "notes": "Input-only (VP). No internal pull-up or pull-down. ADC1 channel 0."
-  },
-  "37": {
-    "input": true, "output": false,
-    "adc1": true, "adc2": false,
-    "dac": false, "touch": false,
-    "pullup": false, "pulldown": false,
-    "flags": ["input_only"],
-    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 1."
-  },
-  "38": {
-    "input": true, "output": false,
-    "adc1": true, "adc2": false,
-    "dac": false, "touch": false,
-    "pullup": false, "pulldown": false,
-    "flags": ["input_only"],
-    "notes": "Input-only. No internal pull-up or pull-down. ADC1 channel 2."
   },
   "39": {
     "input": true, "output": false,

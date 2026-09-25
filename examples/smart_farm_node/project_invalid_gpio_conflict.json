@@ -1,0 +1,24 @@
+{
+  "board": "esp32dev",
+  "components": [
+    {
+      "instance_id": "relay_1",
+      "catalog_id": "relay_module",
+      "pin_mapping": {
+        "IN": 26
+      }
+    },
+    {
+      "instance_id": "ds18b20_1",
+      "catalog_id": "ds18b20",
+      "pin_mapping": {
+        "DQ": 26
+      }
+    }
+  ],
+  "buses": {},
+  "app": {
+    "wifi": false,
+    "serial_logging": true
+  }
+}

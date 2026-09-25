@@ -7,18 +7,15 @@
   "supply_voltage": 3.3,
   "logic_voltage": 3.3,
   "pins": [
-    { "name": "VCC", "role": "vcc" },
-    { "name": "GND", "role": "gnd" },
-    { "name": "AOUT", "role": "adc", "notes": "Analog output: ~3.3V in dry air, ~1.2V submerged. Map to 0–100% moisture." }
+    { "name": "VCC",  "role": "vcc" },
+    { "name": "GND",  "role": "gnd" },
+    { "name": "AOUT", "role": "adc", "notes": "Analog output: voltage decreases as moisture increases." }
   ],
   "measurements": [
     { "name": "moisture", "unit": "%", "range_min": 0, "range_max": 100 }
   ],
   "min_read_interval_ms": 500,
-  "library": {
-    "platformio_id": "None — read directly with analogRead()",
-    "version": "TODO: verify"
-  },
-  "notes": "Must use an ADC1 pin (GPIO32–39) when WiFi is enabled — ADC2 pins are disabled by the WiFi driver. The raw reading needs calibration: dry air value (~3.3V / 4095 counts) maps to 0% moisture; submerged value (~1.2V) maps to 100%. These thresholds vary by sensor unit.",
-  "datasheet_url": "TODO: verify"
+  "libraries": [],
+  "notes": "Must use an ADC1 pin (GPIO32–36, 39) when WiFi is enabled — ADC2 pins are disabled by the WiFi driver. Output does NOT reach 3.3V: typical range is ~2.5–2.9V in dry air and ~1.0–1.5V submerged in water at 3.3V supply. Always calibrate — thresholds vary by sensor unit and PCB revision. Some clones use an NE555 oscillator that requires a 5V supply to function correctly; if the sensor output looks wrong at 3.3V, try powering VCC from 5V.",
+  "datasheet_url": "https://www.electronicoscaldas.com/datasheet/SoilMoistureSensorV1.2.pdf"
 }

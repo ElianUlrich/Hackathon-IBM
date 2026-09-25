@@ -20,10 +20,9 @@
   ],
   "measurements": [],
   "min_read_interval_ms": 0,
-  "library": {
-    "platformio_id": "olikraus/U8g2",
-    "version": "TODO: verify"
-  },
-  "notes": "3.3V device. Most breakout boards accept 3.3–5V supply but the logic is 3.3V — safe to connect directly to ESP32. Default I2C address is 0x3C; some modules hard-wire 0x3D. Use U8g2 constructor U8G2_SSD1306_128X64_NONAME_F_HW_I2C or the page-buffer variant to save RAM.",
+  "libraries": [
+    { "platformio_id": "olikraus/U8g2", "version": "^2.35.19" }
+  ],
+  "notes": "3.3V device. Most breakout boards accept 3.3–5V supply but the logic is 3.3V — safe to connect directly to ESP32. Default I2C address is 0x3C; some modules hard-wire 0x3D. Use U8g2 constructor U8G2_SSD1306_128X64_NONAME_F_HW_I2C or the page-buffer variant to save RAM. Note: many 1.3-inch OLED modules use an SH1106 controller, not SSD1306 — they are physically similar but require a different U8g2 constructor (U8G2_SH1106_128X64_NONAME_F_HW_I2C). If the display shows garbage or partial content, try the SH1106 constructor.",
   "datasheet_url": "https://cdn-shop.adafruit.com/datasheets/SSD1306.pdf"
 }

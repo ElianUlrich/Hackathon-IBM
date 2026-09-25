@@ -13,10 +13,7 @@
   ],
   "measurements": [],
   "min_read_interval_ms": 0,
-  "library": {
-    "platformio_id": "None — controlled with digitalWrite()",
-    "version": "TODO: verify"
-  },
-  "notes": "The coil requires 5V — power from the DevKit's 5V (VIN) pin. The IN signal is 3.3V-compatible via the optocoupler on most modules. Most modules are ACTIVE LOW: writing LOW energizes the relay. Verify the active level for your specific module before wiring.",
-  "datasheet_url": "TODO: verify"
+  "libraries": [],
+  "notes": "The coil requires 5V — power from the DevKit's 5V (VIN) pin. Most modules are ACTIVE LOW: writing LOW energizes the relay, HIGH releases it. 3.3V compatibility warning: 5V active-LOW opto modules may not switch OFF reliably when the ESP32 drives the IN pin HIGH at 3.3V. Safe options: (1) remove the JD-VCC jumper and power VCC=3.3V / JD-VCC=5V separately so the opto input is 3.3V-referenced; (2) use a relay module rated for 3.3V coil; (3) add a transistor driver (e.g. 2N2222 + 1kΩ base resistor). Firmware tip: write HIGH to the IN pin before calling pinMode(OUTPUT) to prevent the relay from clicking at boot when the GPIO floats low during initialization.",
+  "datasheet_url": "https://www.electronicoscaldas.com/datasheet/HL52SS.pdf"
 }

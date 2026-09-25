@@ -24,10 +24,9 @@
     { "name": "pressure",    "unit": "hPa","range_min": 300, "range_max": 1100 }
   ],
   "min_read_interval_ms": 1000,
-  "library": {
-    "platformio_id": "adafruit/Adafruit BME280 Library",
-    "version": "TODO: verify"
-  },
-  "notes": "3.3V device — do not connect to 5V supply. SDO to GND selects address 0x76 (default); SDO to VCC selects 0x77. The breakout board usually includes pull-ups on SDA/SCL; a second device on the bus does not need more pull-ups.",
+  "libraries": [
+    { "platformio_id": "adafruit/Adafruit BME280 Library", "version": "^2.2.4" }
+  ],
+  "notes": "3.3V device — do not connect to 5V supply. SDO to GND selects address 0x76 (default); SDO to VCC selects 0x77. Always pass the address explicitly to begin() — the Adafruit library defaults to 0x77 but generic modules typically use 0x76. Many cheap modules are actually BMP280 (no humidity sensor): verify by checking the chip ID returned by begin(). The breakout board usually includes pull-ups on SDA/SCL; a second device on the bus does not need more pull-ups.",
   "datasheet_url": "https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bme280-ds002.pdf"
 }

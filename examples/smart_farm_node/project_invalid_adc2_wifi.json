@@ -1,0 +1,17 @@
+{
+  "board": "esp32dev",
+  "components": [
+    {
+      "instance_id": "soil_1",
+      "catalog_id": "soil_moisture_v12",
+      "pin_mapping": {
+        "AOUT": 25
+      }
+    }
+  ],
+  "buses": {},
+  "app": {
+    "wifi": true,
+    "serial_logging": true
+  }
+}

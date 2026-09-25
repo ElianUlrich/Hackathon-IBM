@@ -53,10 +53,11 @@ def load_pin_table() -> dict:
 
 
 FLASH_PINS = set(range(6, 12))          # GPIO6–11
-INPUT_ONLY_PINS = {34, 35, 36, 37, 38, 39}
+INPUT_ONLY_PINS = {34, 35, 36, 39}     # GPIO37/38 not broken out on WROOM-32/DevKit
 STRAPPING_PINS = {0, 2, 5, 12, 15}
 UART0_PINS = {1, 3}
-EXISTING_GPIOS = set(range(0, 20)) | {21, 22, 23} | set(range(25, 28)) | set(range(32, 40))
+# GPIO37 and GPIO38 exist on the die but are NOT broken out on WROOM-32/DevKit boards.
+EXISTING_GPIOS = set(range(0, 20)) | {21, 22, 23} | set(range(25, 28)) | {32, 33, 34, 35, 36, 39}
 
 
 # ---------------------------------------------------------------------------
@@ -79,9 +80,20 @@ def validate_schema(project: dict) -> list[str]:
 # Stage 2: Semantic / ESP32-specific validation  (§8)
 # ---------------------------------------------------------------------------
 
+def _pin_role_map(catalog_entry: dict) -> dict[str, str]:
+    """
+    Return {pin_name_upper: role} for all pins in the catalog entry.
+    pin names are upper-cased for case-insensitive lookup.
+    """
+    return {
+        p["name"].upper(): p["role"]
+        for p in catalog_entry.get("pins", [])
+    }
+
+
 def collect_all_gpio_assignments(project: dict) -> dict[int, list[str]]:
     """
-    Return a mapping of gpio_number -> list of (instance_id, role) strings.
+    Return a mapping of gpio_number -> list of (instance_id, pin_name) strings.
     Also covers bus pins.
     """
     assignments: dict[int, list[str]] = {}
@@ -89,11 +101,11 @@ def collect_all_gpio_assignments(project: dict) -> dict[int, list[str]]:
     def assign(gpio: int, label: str) -> None:
         assignments.setdefault(gpio, []).append(label)
 
-    # Component pin_mapping
+    # Component pin_mapping — keyed by component pin name (e.g. "CS", "SDA")
     for comp in project.get("components", []):
         iid = comp["instance_id"]
-        for role, gpio in comp.get("pin_mapping", {}).items():
-            assign(gpio, f"{iid}.{role}")
+        for pin_name, gpio in comp.get("pin_mapping", {}).items():
+            assign(gpio, f"{iid}.{pin_name}")
 
     # Bus pins (may overlap with component pin_mapping for shared buses — that is expected)
     buses = project.get("buses", {})
@@ -110,6 +122,9 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
     """
     Return (errors, warnings) lists.
     All rule references are to docs/PROJECT_PINPILOT.md §8.
+
+    pin_mapping keys are component pin names (e.g. "CS", "SDA", "DC", "RESET").
+    Role-based checks resolve the role from the catalog pin list by name.
     """
     errors: list[str] = []
     warnings: list[str] = []
@@ -127,8 +142,8 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
 
     for comp in project.get("components", []):
         iid = comp["instance_id"]
-        for role, gpio in comp.get("pin_mapping", {}).items():
-            comp_assign(gpio, f"{iid}.{role}")
+        for pin_name, gpio in comp.get("pin_mapping", {}).items():
+            comp_assign(gpio, f"{iid}.{pin_name}")
 
     # -----------------------------------------------------------------------
     # Rule: GPIO must exist on this chip
@@ -145,8 +160,8 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
     for gpio in sorted(all_referenced_gpios):
         if gpio not in EXISTING_GPIOS:
             errors.append(
-                f"GPIO{gpio} does not exist on ESP32-WROOM-32. "
-                f"Valid GPIOs: 0-19, 21-23, 25-27, 32-39."
+                f"GPIO{gpio} does not exist on ESP32-WROOM-32 or is not broken out on this DevKit. "
+                f"Valid GPIOs: 0-19, 21-23, 25-27, 32-36, 39."
             )
 
     # -----------------------------------------------------------------------
@@ -160,21 +175,24 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
 
     # -----------------------------------------------------------------------
     # Rule §8 E2: Output function on input-only pins GPIO34–39
+    # Pin_mapping is keyed by component pin name; resolve role from catalog.
     # -----------------------------------------------------------------------
+    OUTPUT_ROLES = {
+        "gpio_out", "spi_mosi", "spi_sck", "spi_cs",
+        "i2c_sda", "i2c_scl", "uart_tx", "pwm",
+        "onewire",  # 1-Wire is bidirectional but needs drive capability
+    }
     for comp in project.get("components", []):
         iid = comp["instance_id"]
-        for role, gpio in comp.get("pin_mapping", {}).items():
+        catalog_entry = load_catalog_component(comp["catalog_id"])
+        role_map = _pin_role_map(catalog_entry) if catalog_entry else {}
+        for pin_name, gpio in comp.get("pin_mapping", {}).items():
             if gpio in INPUT_ONLY_PINS:
-                # Roles that require output capability
-                output_roles = {
-                    "gpio_out", "spi_mosi", "spi_sck", "spi_cs",
-                    "i2c_sda", "i2c_scl", "uart_tx", "pwm",
-                    "onewire",  # 1-Wire is bidirectional but needs drive capability
-                }
-                if role in output_roles:
+                role = role_map.get(pin_name.upper(), "")
+                if role in OUTPUT_ROLES:
                     errors.append(
-                        f"{iid}.{role} is assigned to GPIO{gpio} which is input-only "
-                        f"(GPIO34–39 have no output capability and no internal pull-ups)."
+                        f"{iid}.{pin_name} (role: {role}) is assigned to GPIO{gpio} which is input-only "
+                        f"(GPIO34, 35, 36, 39 have no output capability and no internal pull-ups)."
                     )
 
     # -----------------------------------------------------------------------
@@ -214,7 +232,7 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
             i2c_bus_addresses[bus_id][addr] = iid
 
     # -----------------------------------------------------------------------
-    # Rule §8 E4: Same GPIO assigned to two different functions
+    # Rule §8 E4: Same GPIO assigned to two different functions via component pin_mapping
     # (Bus pins are excluded from duplicate checks — shared bus lines are expected)
     # -----------------------------------------------------------------------
     bus_gpios: set[int] = set()
@@ -224,10 +242,6 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
                 bus_gpios.add(v)
 
     for gpio, labels in component_gpio_assignments.items():
-        # Remove bus-pin assignments — shared bus usage is legal
-        non_bus_labels = [l for l in labels if not l.startswith("bus:")]
-        # For shared I2C/SPI buses, multiple components legitimately share the same data/clock pins.
-        # Only flag if multiple components assign conflicting *non-bus* roles on a non-bus GPIO.
         if gpio in bus_gpios:
             continue  # pin is a bus pin, skip duplicate check
         if len(labels) > 1:
@@ -238,6 +252,7 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
 
     # -----------------------------------------------------------------------
     # Rule §8 E5: ADC2 pin used for analog sensor while WiFi is enabled
+    # Resolve pin role from catalog; flag pins with role "adc" on ADC2 GPIOs.
     # -----------------------------------------------------------------------
     if wifi_enabled:
         for comp in project.get("components", []):
@@ -247,7 +262,9 @@ def validate_semantics(project: dict, pin_table: dict) -> tuple[list[str], list[
                 continue
             if catalog_entry.get("interface") != "adc":
                 continue
-            for role, gpio in comp.get("pin_mapping", {}).items():
+            role_map = _pin_role_map(catalog_entry)
+            for pin_name, gpio in comp.get("pin_mapping", {}).items():
+                role = role_map.get(pin_name.upper(), "")
                 if role == "adc":
                     gpio_info = pin_table.get(str(gpio), {})
                     if gpio_info.get("adc2", False):

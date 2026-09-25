@@ -35,7 +35,7 @@
           },
           "pin_mapping": {
             "type": "object",
-            "description": "Maps component pin roles to ESP32 GPIO numbers (as integers).",
+            "description": "Maps component pin names (as printed on the breakout board, e.g. CS, DC, SDA) to ESP32 GPIO numbers (as integers). Keyed by pin name so that components with two pins sharing the same role (e.g. ILI9341 DC and RESET are both gpio_out) can both be represented without collision.",
             "additionalProperties": {
               "type": "integer",
               "minimum": 0,

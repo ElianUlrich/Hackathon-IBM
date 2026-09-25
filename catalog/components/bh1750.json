@@ -13,20 +13,19 @@
     ]
   },
   "pins": [
-    { "name": "VCC", "role": "vcc" },
-    { "name": "GND", "role": "gnd" },
-    { "name": "SDA", "role": "i2c_sda" },
-    { "name": "SCL", "role": "i2c_scl" },
-    { "name": "ADDR", "role": "gpio_in", "notes": "Address select: LOW = 0x23, HIGH = 0x5C" }
+    { "name": "VCC",  "role": "vcc" },
+    { "name": "GND",  "role": "gnd" },
+    { "name": "SDA",  "role": "i2c_sda" },
+    { "name": "SCL",  "role": "i2c_scl" },
+    { "name": "ADDR", "role": "config", "notes": "Address select: tie to GND (or leave floating) for 0x23; tie to VCC for 0x5C. Never wired to an ESP32 GPIO." }
   ],
   "measurements": [
     { "name": "light", "unit": "lux", "range_min": 0, "range_max": 65535 }
   ],
   "min_read_interval_ms": 180,
-  "library": {
-    "platformio_id": "claws/BH1750",
-    "version": "TODO: verify"
-  },
+  "libraries": [
+    { "platformio_id": "claws/BH1750", "version": "^1.3.0" }
+  ],
   "notes": "3.3V device. ADDR pin to GND (or left floating) gives address 0x23; ADDR to VCC gives 0x5C. The sensor supports up to 120 klux with high-resolution mode 2 (180 ms integration time). Pull-ups on SDA/SCL usually provided by the breakout board.",
   "datasheet_url": "https://www.mouser.com/datasheet/2/348/bh1750fvi-e-186247.pdf"
 }

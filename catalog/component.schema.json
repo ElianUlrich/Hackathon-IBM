@@ -4,7 +4,7 @@
   "title": "PinPilot Component Catalog Entry",
   "description": "Schema for a single component entry in the PinPilot catalog.",
   "type": "object",
-  "required": ["id", "name", "category", "description", "interface", "supply_voltage", "logic_voltage", "pins", "min_read_interval_ms", "library"],
+  "required": ["id", "name", "category", "description", "interface", "supply_voltage", "logic_voltage", "pins", "min_read_interval_ms"],
   "additionalProperties": false,
   "properties": {
     "id": {
@@ -83,9 +83,10 @@
               "onewire",
               "uart_tx", "uart_rx",
               "i2s_bck", "i2s_ws", "i2s_data",
-              "pwm"
+              "pwm",
+              "config"
             ],
-            "description": "Functional role of this pin"
+            "description": "Functional role of this pin. Use 'config' for pins tied to GND/VCC that are never wired to the ESP32 (e.g. address-select resistors)."
           },
           "notes": {
             "type": "string",
@@ -114,19 +115,22 @@
       "minimum": 0,
       "description": "Minimum time between sensor reads in milliseconds"
     },
-    "library": {
-      "type": "object",
-      "description": "PlatformIO library dependency for this component",
-      "required": ["platformio_id", "version"],
-      "additionalProperties": false,
-      "properties": {
-        "platformio_id": {
-          "type": "string",
-          "description": "Library identifier as used in lib_deps, e.g. adafruit/Adafruit BME280 Library"
-        },
-        "version": {
-          "type": "string",
-          "description": "Pinned version string or TODO: verify"
+    "libraries": {
+      "type": "array",
+      "description": "PlatformIO library dependencies for this component. Empty array for components that need no library (e.g. relay, soil sensor using analogRead).",
+      "items": {
+        "type": "object",
+        "required": ["platformio_id", "version"],
+        "additionalProperties": false,
+        "properties": {
+          "platformio_id": {
+            "type": "string",
+            "description": "Library identifier as used in lib_deps, e.g. adafruit/Adafruit BME280 Library"
+          },
+          "version": {
+            "type": "string",
+            "description": "Pinned version string, e.g. ^2.4.0"
+          }
         }
       }
     },
@@ -137,7 +141,7 @@
     "datasheet_url": {
       "type": "string",
       "format": "uri",
-      "description": "URL to the component datasheet"
+      "description": "URL to the component datasheet. Omit if not available."
     }
   }
 }

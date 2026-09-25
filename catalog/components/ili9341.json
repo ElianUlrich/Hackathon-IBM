@@ -7,22 +7,21 @@
   "supply_voltage": 3.3,
   "logic_voltage": 3.3,
   "pins": [
-    { "name": "VCC",  "role": "vcc" },
-    { "name": "GND",  "role": "gnd" },
-    { "name": "CS",   "role": "spi_cs",   "notes": "Chip Select — assign a free output GPIO" },
-    { "name": "RESET","role": "gpio_out", "notes": "Display reset — assign a free output GPIO" },
-    { "name": "DC",   "role": "gpio_out", "notes": "Data/Command select — assign a free output GPIO" },
-    { "name": "MOSI", "role": "spi_mosi" },
-    { "name": "SCK",  "role": "spi_sck" },
-    { "name": "LED",  "role": "vcc",      "notes": "Backlight — connect to 3.3V or PWM GPIO for brightness control. Phase 1 wires to 3.3V." },
-    { "name": "MISO", "role": "spi_miso", "notes": "Only needed if reading back from display; usually left unconnected." }
+    { "name": "VCC",   "role": "vcc" },
+    { "name": "GND",   "role": "gnd" },
+    { "name": "CS",    "role": "spi_cs",   "notes": "Chip Select — assign a free output GPIO" },
+    { "name": "RESET", "role": "gpio_out", "notes": "Display reset — assign a free output GPIO" },
+    { "name": "DC",    "role": "gpio_out", "notes": "Data/Command select — assign a free output GPIO" },
+    { "name": "MOSI",  "role": "spi_mosi" },
+    { "name": "SCK",   "role": "spi_sck" },
+    { "name": "LED",   "role": "vcc",      "notes": "Backlight — connect to 3.3V or PWM GPIO for brightness control. Phase 1 wires to 3.3V." },
+    { "name": "MISO",  "role": "spi_miso", "notes": "Only needed if reading back from display; usually left unconnected." }
   ],
   "measurements": [],
   "min_read_interval_ms": 0,
-  "library": {
-    "platformio_id": "Bodmer/TFT_eSPI",
-    "version": "TODO: verify"
-  },
+  "libraries": [
+    { "platformio_id": "Bodmer/TFT_eSPI", "version": "^2.5.43" }
+  ],
   "notes": "Configure TFT_eSPI exclusively through build_flags in platformio.ini — never edit files inside .pio/libdeps/. Required build flags: -D USER_SETUP_LOADED -D ILI9341_DRIVER -D TFT_MOSI=23 -D TFT_SCLK=18 -D TFT_CS=<pin> -D TFT_DC=<pin> -D TFT_RST=<pin> -D SPI_FREQUENCY=40000000. Use LVGL v9 API only (NOT v8). Use a partial draw buffer (~1/10 screen = 320*24*2 = ~15 KB).",
   "datasheet_url": "https://cdn-shop.adafruit.com/datasheets/ILI9341.pdf"
 }
