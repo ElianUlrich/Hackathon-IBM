@@ -203,7 +203,7 @@ without triggering each mode in a live session.
 
 ## Phase 3 — Web App (Visual Configurator)
 
-**Date:** 2025-01  
+**Date:** 2026-09-26  
 **Bob features used:** Agent mode, plan file in Plan mode, subagent (codebase exploration), `write_file` / `apply_diff` / `search_and_replace`, `execute_command`, `update_todo_list`
 
 ### Files Created
@@ -259,7 +259,7 @@ without triggering each mode in a live session.
 
 ## Phase 4a — Firmware Generation: weather_station
 
-**Date:** 2025  
+**Date:** 2026-09-26  
 **Mode:** Firmware Dev  
 **Skill activated:** `generate-firmware`
 
@@ -308,7 +308,7 @@ Flash: 23.4% (307,213 / 1,310,720 bytes used)
 
 ## Phase 4b — Firmware Generation: smart_farm_node
 
-**Date:** 2025-07  
+**Date:** 2026-09-26 
 **Mode sequence:** Firmware Dev → Build Fixer  
 **Bob features used:** `generate-firmware` skill, `spawn_subagent` (2 parallel), `switch_mode` to build-fixer, `execute_command` (PlatformIO build), `write_file`, `apply_diff`
 
@@ -353,7 +353,7 @@ Flash: 23.4% (307,213 / 1,310,720 bytes used)
 
 ## Phase 5 — LaTeX Documentation: smart\_farm\_node
 
-**Date:** 2025-07-09  
+**Date:** 2026-09-26 
 **Mode:** Tech Writer  
 **Bob features used:** `project-docs` skill, LaTeX generation rules (workspace rule `01-tech-writer.md`), pdflatex compilation procedure.
 
