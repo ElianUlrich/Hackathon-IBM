@@ -303,3 +303,48 @@ Flash: 23.4% (307,213 / 1,310,720 bytes used)
 
 ### Open issues
 - None.
+
+---
+
+## Phase 4b — Firmware Generation: smart_farm_node
+
+**Date:** 2025-07  
+**Mode sequence:** Firmware Dev → Build Fixer  
+**Bob features used:** `generate-firmware` skill, `spawn_subagent` (2 parallel), `switch_mode` to build-fixer, `execute_command` (PlatformIO build), `write_file`, `apply_diff`
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `examples/smart_farm_node/firmware/platformio.ini` | PlatformIO config, pinned lib versions, TFT/LVGL build flags |
+| `examples/smart_farm_node/firmware/include/pinmap.h` | All GPIO/address constants |
+| `examples/smart_farm_node/firmware/include/lv_conf.h` | LVGL v9 config (arc, label, chart only) |
+| `examples/smart_farm_node/firmware/include/secrets.example.h` | WiFi credential placeholder (gitignored live file) |
+| `examples/smart_farm_node/firmware/src/main.cpp` | Non-blocking setup/loop |
+| `examples/smart_farm_node/firmware/src/components/soil_1.h/.cpp` | Capacitive moisture ADC driver |
+| `examples/smart_farm_node/firmware/src/components/ds18b20_1.h/.cpp` | 1-Wire DS18B20 non-blocking driver |
+| `examples/smart_farm_node/firmware/src/components/bme280_1.h/.cpp` | BME280 I2C driver |
+| `examples/smart_farm_node/firmware/src/components/relay_1.h/.cpp` | Active-LOW relay driver (boot-safe) |
+| `examples/smart_farm_node/firmware/src/components/display.h/.cpp` | LVGL v9 TFT_eSPI display + GUI |
+
+### Build Attempts
+| Attempt | Error | Fix |
+|---------|-------|-----|
+| 1 (firmware-dev) | `invalid conversion from 'long unsigned int (*)()' to 'lv_tick_get_cb_t'` | Passed `millis` directly to `lv_tick_set_cb` |
+| 2 (build-fixer) | Same — fixed by adding `static uint32_t lvgl_tick_cb() { return (uint32_t)millis(); }` wrapper | **BUILD PASSED** |
+
+### Build Result
+- **RAM:** 29.0% — 95,056 / 327,680 bytes  
+- **Flash:** 41.2% — 539,373 / 1,310,720 bytes
+
+### Acceptance Criteria
+- [x] All components have `begin()` + `update()` with non-blocking millis() scheduling
+- [x] LVGL v9 API only (lv_tft_espi_create, lv_tick_set_cb via wrapper)
+- [x] Partial draw buffer (320×24 × 2 = 15,360 bytes)
+- [x] lv_timer_handler() called every ~5ms in loop()
+- [x] Relay: digitalWrite HIGH before pinMode OUTPUT
+- [x] secrets.example.h committed; secrets.h gitignored
+- [x] Build passes with no errors
+
+### Open Issues
+- WiFi credentials in `secrets.h` are placeholders — user must populate before flashing.
+- Relay auto-control logic (threshold-based) not yet wired up — relay1.setOn() available but not called from loop.
