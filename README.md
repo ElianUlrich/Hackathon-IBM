@@ -69,6 +69,11 @@ skills turn it into a **verified PlatformIO project** and its documentation:
 
 The smart farm node also ships with a generated 5-page PDF: `docs/smart_farm_node.pdf`.
 
+**Datasheet import:** using the `add-component` skill, Bob read the official AHT20 datasheet
+and created `catalog/components/aht20.json`, citing the datasheet page for every value
+(I2C 0x38, 2.2–5.5 V, ±2 %RH / ±0.3 °C, 2.0–4.7 kΩ pull-ups). It set a 1 s read interval
+because the datasheet warns about self-heating.
+
 The validator catches the intentional mistakes in the example projects:
 
 | Example | Result |
