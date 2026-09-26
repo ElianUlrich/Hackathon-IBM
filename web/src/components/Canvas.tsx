@@ -20,7 +20,12 @@ const ESP32_Y = 20;
 const COMP_LEFT_X = 20;
 const COMP_RIGHT_X = 660;
 
-function buildInitialNodes(project: ProjectState, posMap: Map<string, { x: number; y: number }>): Node[] {
+function buildInitialNodes(
+  project: ProjectState,
+  posMap: Map<string, { x: number; y: number }>,
+  onDelete: (instanceId: string) => void,
+  onPinChange: (instanceId: string, pinName: string, gpio: number) => void,
+): Node[] {
   const usedPins: { gpio: number; label: string }[] = [];
   const seen = new Set<number>();
   for (const comp of project.components) {
@@ -51,7 +56,11 @@ function buildInitialNodes(project: ProjectState, posMap: Map<string, { x: numbe
 
   project.components.forEach((comp, idx) => {
     const def = CATALOG.find(d => d.id === comp.catalog_id);
-    const pins = Object.entries(comp.pin_mapping).map(([name, gpio]) => ({ name, gpio }));
+    const pins = Object.entries(comp.pin_mapping).map(([name, gpio]) => ({
+      name,
+      gpio,
+      role: def?.pins.find(p => p.name === name)?.role ?? '',
+    }));
     const compH = NODE_HEADER_H + pins.length * NODE_ROW_H;
 
     let pos: { x: number; y: number };
@@ -74,6 +83,8 @@ function buildInitialNodes(project: ProjectState, posMap: Map<string, { x: numbe
         iface: def?.interface ?? '',
         pins,
         instanceId: comp.instance_id,
+        onDelete: () => onDelete(comp.instance_id),
+        onPinChange: (pinName: string, gpio: number) => onPinChange(comp.instance_id, pinName, gpio),
       },
     });
   });
@@ -102,9 +113,11 @@ function buildEdges(project: ProjectState): Edge[] {
 
 interface CanvasProps {
   project: ProjectState;
+  onDeleteComponent: (instanceId: string) => void;
+  onPinChange: (instanceId: string, pinName: string, gpio: number) => void;
 }
 
-export function Canvas({ project }: CanvasProps) {
+export function Canvas({ project, onDeleteComponent, onPinChange }: CanvasProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges] = useEdgesState<Edge>([]);
 
@@ -114,7 +127,7 @@ export function Canvas({ project }: CanvasProps) {
       const posMap = new Map<string, { x: number; y: number }>(
         prev.map(n => [n.id, n.position])
       );
-      return buildInitialNodes(project, posMap);
+      return buildInitialNodes(project, posMap, onDeleteComponent, onPinChange);
     });
     setEdges(buildEdges(project));
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,6 +138,15 @@ export function Canvas({ project }: CanvasProps) {
     [onNodesChange]
   );
 
+  const handleNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      for (const n of deleted) {
+        if (n.id !== 'esp32') onDeleteComponent(n.id);
+      }
+    },
+    [onDeleteComponent]
+  );
+
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <ReactFlow
@@ -132,6 +154,7 @@ export function Canvas({ project }: CanvasProps) {
         edges={edges}
         nodeTypes={nodeTypes}
         onNodesChange={handleNodesChange}
+        onNodesDelete={handleNodesDelete}
         fitView
         fitViewOptions={{ padding: 0.2 }}
       >

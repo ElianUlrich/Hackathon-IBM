@@ -64,6 +64,42 @@ export default function App() {
     setProject(next);
   }
 
+  function handleDeleteComponent(instanceId: string) {
+    setProject(p => {
+      const components = p.components.filter(c => c.instance_id !== instanceId);
+      // Rebuild buses: drop bus if no component uses it anymore
+      const needsI2c = components.some(c => c.bus_id === 'i2c0');
+      const needsSpi = components.some(c => c.bus_id === 'spi0');
+      const buses = {
+        ...(needsI2c && p.buses.i2c0 ? { i2c0: p.buses.i2c0 } : {}),
+        ...(needsSpi && p.buses.spi0 ? { spi0: p.buses.spi0 } : {}),
+      };
+      // Drop screen if it was bound to the deleted component or a now-removed sensor
+      let screen = p.screen;
+      if (screen) {
+        if (screen.instance_id === instanceId) {
+          screen = undefined;
+        } else {
+          const remainingIds = new Set(components.map(c => c.instance_id));
+          const widgets = screen.widgets.filter(w => remainingIds.has(w.binding.split('.')[0]));
+          screen = { ...screen, widgets };
+        }
+      }
+      return { ...p, components, buses, screen };
+    });
+  }
+
+  function handlePinChange(instanceId: string, pinName: string, gpio: number) {
+    setProject(p => ({
+      ...p,
+      components: p.components.map(c =>
+        c.instance_id === instanceId
+          ? { ...c, pin_mapping: { ...c.pin_mapping, [pinName]: gpio } }
+          : c
+      ),
+    }));
+  }
+
   function handleScreenChange(screen: ProjectState['screen']) {
     setProject(p => ({ ...p, screen }));
   }
@@ -81,7 +117,7 @@ export default function App() {
             <p>Add components from the sidebar or load an example to get started.</p>
           </div>
         ) : (
-          <Canvas project={project} />
+          <Canvas project={project} onDeleteComponent={handleDeleteComponent} onPinChange={handlePinChange} />
         )}
       </main>
       <div className="right-column">

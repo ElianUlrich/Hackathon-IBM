@@ -331,3 +331,33 @@ body {
 .wiring-table tr:last-child td {
   border-bottom: none;
 }
+
+/* ─── Component node delete button ──────────────────────────────────────── */
+
+.node-delete-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+.node-delete-btn:hover { color: #fff; }
+
+/* ─── Pin select dropdown ────────────────────────────────────────────────── */
+
+.pin-select {
+  font-family: monospace;
+  font-size: 11px;
+  color: #1f2328;
+  background: #f7f8fa;
+  border: 1px solid #e5e7eb;
+  border-radius: 3px;
+  padding: 0 2px;
+  height: 18px;
+  max-width: 80px;
+  cursor: pointer;
+}
+.pin-select:focus { outline: 1px solid #3b82d4; }

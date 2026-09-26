@@ -448,3 +448,5 @@ python -c "import json, jsonschema, sys; schema = json.load(open('catalog/compon
 - [x] No web build regression (component not auto-imported)
 
 **Open issues:** Library version needs Phase 4 build confirmation.
+
+**Phase 3 mini (web features)** — Delete component (× button + Delete key via onNodesDelete, cleans edges/buses/screen widgets) and manual pin selection (<select> per assignable pin, shared-bus pins read-only) added to ComponentNode/Canvas/App; CSS for .node-delete-btn and .pin-select; `npm run build` passed first attempt (430 kB JS, 19.7 kB CSS). Files changed: `web/src/nodes/ComponentNode.tsx`, `web/src/components/Canvas.tsx`, `web/src/App.tsx`, `web/src/App.css`.
