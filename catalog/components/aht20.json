@@ -1,0 +1,41 @@
+{
+  "id": "aht20",
+  "name": "AHT20",
+  "category": "sensor",
+  "description": "Calibrated digital temperature and humidity sensor with I2C interface.",
+  "interface": "i2c",
+  "supply_voltage": 3.3,
+  "logic_voltage": 3.3,
+  "i2c_addresses": {
+    "default": 56
+  },
+  "pins": [
+    { "name": "VDD", "role": "vcc",      "notes": "2.2–5.5 V; add 10 µF decoupling cap between VDD and GND" },
+    { "name": "GND", "role": "gnd" },
+    { "name": "SCL", "role": "i2c_scl",  "notes": "Requires external 2.0–4.7 kΩ pull-up to VDD" },
+    { "name": "SDA", "role": "i2c_sda",  "notes": "Requires external 2.0–4.7 kΩ pull-up to VDD" }
+  ],
+  "measurements": [
+    {
+      "name": "temperature",
+      "unit": "°C",
+      "range_min": -40,
+      "range_max": 85
+    },
+    {
+      "name": "humidity",
+      "unit": "%RH",
+      "range_min": 0,
+      "range_max": 100
+    }
+  ],
+  "min_read_interval_ms": 1000,
+  "libraries": [
+    {
+      "platformio_id": "adafruit/Adafruit AHTX0",
+      "version": "^2.0.5"
+    }
+  ],
+  "notes": "Fixed I2C address 0x38 (not configurable). Power on then wait ≥100 ms before first command. After sending measurement command 0xAC, wait ≥80 ms before reading. Datasheet recommends ≥1 s between measurements to avoid self-heating. Add 10 µF decoupling capacitor close to VDD/GND pins. Use 2.0–4.7 kΩ pull-up resistors on SCL and SDA.",
+  "datasheet_url": "https://www.aosong.com/userfiles/files/media/Data%20Sheet%20AHT20.pdf"
+}

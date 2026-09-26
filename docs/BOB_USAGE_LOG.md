@@ -400,3 +400,51 @@ Flash: 23.4% (307,213 / 1,310,720 bytes used)
 - [x] Only allowed packages used (`geometry`, `graphicx`, `booktabs`, `longtable`, `tikz`, `listings`, `xcolor`, `hyperref`, `caption` + `fontenc`/`textcomp` for Unicode safety)
 - [x] All project-derived strings passed through `latex_escape()`
 - [x] Auxiliary files remain in `build/`; only PDF copied to `docs/`
+
+---
+
+## Phase 6 — Datasheet Import Demo: AHT20
+
+**Bob features used:** `add-component` skill, `read_file` (PDF), `write_file`, `execute_command` (jsonschema validation).
+
+**Files created:** `catalog/components/aht20.json`
+
+**Commands run:**
+```
+python -c "import json, jsonschema, sys; schema = json.load(open('catalog/component.schema.json')); data = json.load(open('catalog/components/aht20.json')); jsonschema.validate(data, schema); print('OK')"
+# Result: OK
+```
+
+**Web build:** Not required — `web/src/data/components.ts` imports components explicitly by name; adding `aht20.json` does not affect the web app build.
+
+### Extracted values — source page in datasheet
+
+| Field | Value | Datasheet page |
+|-------|-------|---------------|
+| Supply voltage range | 2.2 – 5.5 V | p. 9 (§5.1), p. 11 (§6.1) |
+| Recommended ESP32 supply | 3.3 V | p. 9 (§5.1 note 1) |
+| Logic voltage | VDD-referenced (3.3 V) | p. 10 (§6.2 Table 7) |
+| I2C address (7-bit) | 0x38 = 56 | p. 12 (§7.3) |
+| Pins | VDD, GND, SCL, SDA | p. 9 (§5 Table 5) |
+| Temperature range | –40 to 85 °C | p. 2 (Table 2) |
+| Temperature accuracy | ±0.3 °C | p. 2 (Table 2) |
+| Humidity range | 0 – 100 %RH | p. 2 (Table 1) |
+| Humidity accuracy | ±2 %RH | p. 2 (Table 1) |
+| Measurement time (trigger→read) | ≥ 80 ms | p. 13 (§7.4 step 3) |
+| Recommended read interval | ≥ 1 s (to avoid self-heating) | p. 7 (§4.4) |
+| min_read_interval_ms | 1000 ms | derived from §4.4 |
+| Pull-ups required | 2.0 – 4.7 kΩ on SCL/SDA | p. 9 (§5.3) |
+| Decoupling cap | 10 µF between VDD and GND | p. 9 (§5.1), p. 9 (§4.7) |
+| Power-on wait | ≥ 100 ms before first command | p. 12 (§7.1) |
+| Library | adafruit/Adafruit AHTX0 | — (user-specified) |
+| Library version | ^2.0.5 | TODO: verify in Phase 4 build |
+
+**TODO: verify** — Library version `^2.0.5` must be confirmed by a successful PlatformIO build in Phase 4.
+
+**Acceptance criteria met:**
+- [x] All electrical values sourced from datasheet (no invented data)
+- [x] `catalog/components/aht20.json` passes `jsonschema.validate` against `component.schema.json`
+- [x] Fixed I2C address (0x38 only) — `alternatives` array omitted correctly
+- [x] No web build regression (component not auto-imported)
+
+**Open issues:** Library version needs Phase 4 build confirmation.

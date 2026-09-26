@@ -134,6 +134,7 @@ web/dist/
 *.toc
 *.synctex.gz
 
-# Generated firmware WiFi credentials � never commit
+# Generated firmware WiFi credentials - never commit
 secrets.h
-   !**/secrets.example.h
+!**/secrets.example.h
+datasheets/*.pdf
