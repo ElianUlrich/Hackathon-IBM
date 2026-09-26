@@ -1,0 +1,333 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  background: #f7f8fa;
+  color: #1f2328;
+}
+
+/* ─── Layout ─────────────────────────────────────────────────────────────── */
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr 260px;
+  grid-template-rows: 100vh;
+  overflow: hidden;
+}
+
+.canvas-area {
+  overflow: hidden;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  border-right: 1px solid #e5e7eb;
+  position: relative;
+}
+
+.right-column {
+  overflow-y: auto;
+  background: #f7f8fa;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #57606a;
+  font-size: 13px;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* ─── Sidebar ────────────────────────────────────────────────────────────── */
+
+.sidebar {
+  overflow-y: auto;
+  background: #1f2328;
+  color: #e6edf3;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 2px;
+}
+
+.sidebar-sub {
+  font-size: 11px;
+  color: #8b949e;
+  margin-bottom: 16px;
+}
+
+.sidebar-section {
+  margin-bottom: 20px;
+}
+
+.sidebar-section h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #8b949e;
+  margin-bottom: 8px;
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+  margin-bottom: 4px;
+  transition: opacity 0.1s;
+}
+.btn:hover { opacity: 0.85; }
+
+.btn-outline {
+  background: transparent;
+  border-color: #30363d;
+  color: #c9d1d9;
+}
+
+.btn-warn {
+  border-color: #da3633;
+  color: #f85149;
+}
+
+.btn-add {
+  background: #21262d;
+  border-color: #30363d;
+  color: #c9d1d9;
+  font-size: 12px;
+  padding: 4px 8px;
+  width: auto;
+  margin-top: 4px;
+}
+
+.btn-primary {
+  background: #3b82d4;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+}
+
+.btn-autofix {
+  background: #2a9d5c;
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  margin-bottom: 10px;
+}
+
+/* ─── Catalog items ──────────────────────────────────────────────────────── */
+
+.catalog-item {
+  background: #21262d;
+  border: 1px solid #30363d;
+  border-radius: 5px;
+  padding: 8px;
+  margin-bottom: 6px;
+}
+
+.catalog-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.catalog-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e6edf3;
+  flex: 1;
+}
+
+/* ─── Interface badge ────────────────────────────────────────────────────── */
+
+.iface-badge {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: #555;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.iface-i2c   { background: #3b82d4; }
+.iface-spi   { background: #7c5cd8; }
+.iface-adc   { background: #e08a00; }
+.iface-gpio  { background: #2a9d5c; }
+.iface-onewire { background: #c0392b; }
+.iface-uart  { background: #555; }
+
+/* ─── React Flow nodes ───────────────────────────────────────────────────── */
+
+.esp32-node,
+.component-node {
+  background: #fff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 6px;
+  min-width: 180px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.esp32-node .node-header {
+  background: #1f2328;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 5px 5px 0 0;
+}
+
+.component-node .node-header {
+  background: #3b82d4;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.node-body {
+  padding: 6px 8px;
+}
+
+.pin-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  padding: 2px 0;
+  position: relative;
+}
+
+.pin-label {
+  flex: 1;
+  color: #57606a;
+}
+
+.pin-gpio {
+  font-family: monospace;
+  font-size: 11px;
+  color: #1f2328;
+}
+
+/* ─── Right panel ────────────────────────────────────────────────────────── */
+
+.right-panel {
+  padding: 14px;
+}
+
+.panel-section {
+  margin-bottom: 20px;
+}
+
+.panel-section h3 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #57606a;
+  margin-bottom: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.hint {
+  font-size: 11px;
+  color: #57606a;
+  margin-top: 4px;
+}
+
+.ok-msg {
+  color: #2a9d5c;
+  font-size: 13px;
+}
+
+/* ─── Validation issues ──────────────────────────────────────────────────── */
+
+.issue {
+  border-radius: 4px;
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.issue-error {
+  background: #fff0f0;
+  border-left: 3px solid #da3633;
+}
+
+.issue-warn {
+  background: #fffbea;
+  border-left: 3px solid #e08a00;
+}
+
+.issue-code {
+  font-weight: 700;
+  margin-right: 6px;
+}
+
+.issue-msg {
+  display: block;
+}
+
+.issue-hint {
+  display: block;
+  color: #57606a;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+/* ─── Wiring table ───────────────────────────────────────────────────────── */
+
+.wiring-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.wiring-table th {
+  text-align: left;
+  padding: 4px 6px;
+  background: #e5e7eb;
+  font-size: 11px;
+  color: #57606a;
+}
+
+.wiring-table td {
+  padding: 4px 6px;
+  border-bottom: 1px solid #f0f1f3;
+}
+
+.wiring-table tr:last-child td {
+  border-bottom: none;
+}

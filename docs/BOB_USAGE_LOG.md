@@ -198,3 +198,59 @@ without triggering each mode in a live session.
 - User must confirm skills list shows all 4 skills in the next session before Phase 4.
 - Phase 3 (web app) can begin in a new context window once confirmations are in.
 - `pdflatex` tool presence not yet verified — remind user to run `pdflatex --version` before Phase 5.
+
+---
+
+## Phase 3 — Web App (Visual Configurator)
+
+**Date:** 2025-01  
+**Bob features used:** Agent mode, plan file in Plan mode, subagent (codebase exploration), `write_file` / `apply_diff` / `search_and_replace`, `execute_command`, `update_todo_list`
+
+### Files Created
+| File | Description |
+|------|-------------|
+| `web/` | Full Vite + React + TypeScript project |
+| `web/vite.config.ts` | Base path `/Hackathon-IBM/` for GitHub Pages |
+| `web/src/types.ts` | All TypeScript interfaces (ComponentDef, PinDef, ProjectState, ValidationResult, …) |
+| `web/src/data/components.ts` | Catalog JSON imported and typed as `CATALOG: ComponentDef[]` |
+| `web/src/data/pins.ts` | ESP32 pin table imported as `ESP32_PINS: Record<number, PinDef>` |
+| `web/src/lib/autoAssign.ts` | Deterministic pin auto-assignment following §8 rules |
+| `web/src/lib/validator.ts` | E1–E5 errors + W1–W3 warnings mirroring `validate_project.py` |
+| `web/src/nodes/Esp32Node.tsx` | React Flow custom node for the ESP32 DevKit |
+| `web/src/nodes/ComponentNode.tsx` | React Flow custom node for catalog components |
+| `web/src/components/Canvas.tsx` | React Flow canvas with edges showing pin-to-GPIO wiring |
+| `web/src/components/Sidebar.tsx` | Catalog browser, Load Example, Export project.json |
+| `web/src/components/RightPanel.tsx` | WiFi toggle, validation panel, wiring table |
+| `web/src/components/DisplayPanel.tsx` | Display widget checklist (SSD1306/ILI9341) |
+| `web/src/App.tsx` | Root component, single ProjectState, all handlers |
+| `web/src/App.css` | Plain CSS layout (3-column grid, dark sidebar) |
+| `.github/workflows/deploy.yml` | GitHub Actions: build + deploy to GitHub Pages |
+
+### Commands Run
+| Command | Result |
+|---------|--------|
+| `npm create vite@latest web -- --template react-ts` | Scaffolded project |
+| `npm install` (in `web/`) | 27 packages |
+| `npm install @xyflow/react` | 20 packages |
+| `npm run build` (attempt 1) | 4 TS errors (unused import, unused function, possibly-undefined) |
+| `npm run build` (attempt 2) | 1 TS error remaining (closure narrowing) |
+| `npm run build` (attempt 3) | ✅ Success — 427 KB JS, 19 KB CSS, built in 995 ms |
+
+### Acceptance Criteria Met
+- [x] Vite + React + TypeScript in `web/`, `@xyflow/react` only extra dependency
+- [x] Left sidebar: all 7 catalog components listed with Add buttons
+- [x] Canvas: ESP32 DevKit node + ComponentNodes + labeled edges
+- [x] Auto pin-assignment following §8 (I2C 21/22, VSPI 23/19/18, ADC1 for WiFi, free GPIO)
+- [x] Right panel: validation errors/warnings, WiFi toggle, wiring table
+- [x] Display panel: SSD1306/ILI9341 checklist with pixel-positioned widget export
+- [x] Load Example: Weather Station, Smart Farm Node, Invalid (ADC2+WiFi)
+- [x] Export project.json via browser Blob download
+- [x] GitHub Pages workflow: `.github/workflows/deploy.yml`
+- [x] `npm run build` passes with zero errors
+
+### Open Issues
+- GitHub Pages must be set to deploy from the `gh-pages` branch in repo settings (user action).
+- DisplayPanel resets selected state on re-render when project is fully replaced (Load Example). Future: lift selected state into App.
+- Sub-Task 8 (parity check script) dropped per budget constraint.
+
+**Phase 3 polish (same session):** Switched Canvas to controlled `useNodesState`/`useEdgesState` with position preservation across re-renders; added two-column non-overlapping initial layout; display checklist now shows `instance_id · measurement`; added ⚡ Auto-fix pins button (re-runs `autoAssign`) in validation panel, visible only when errors exist. `npm run build` ✅ first attempt.
