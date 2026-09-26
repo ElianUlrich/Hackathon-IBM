@@ -254,3 +254,52 @@ without triggering each mode in a live session.
 - Sub-Task 8 (parity check script) dropped per budget constraint.
 
 **Phase 3 polish (same session):** Switched Canvas to controlled `useNodesState`/`useEdgesState` with position preservation across re-renders; added two-column non-overlapping initial layout; display checklist now shows `instance_id · measurement`; added ⚡ Auto-fix pins button (re-runs `autoAssign`) in validation panel, visible only when errors exist. `npm run build` ✅ first attempt.
+
+---
+
+## Phase 4a — Firmware Generation: weather_station
+
+**Date:** 2025  
+**Mode:** Firmware Dev  
+**Skill activated:** `generate-firmware`
+
+### Bob features used
+- `use_skill` — loaded `generate-firmware` skill for step-by-step protocol.
+- `spawn_subagent` (×2, parallel) — Subagent A generated sensor drivers (`bme280_1`, `bh1750_1`); Subagent B generated OLED display driver (`display`) using U8g2.
+- `write_file` (×9) — wrote all generated firmware files to disk.
+- `execute_command` — ran `python scripts/build.py` and queried resolved library versions from `.pio/libdeps/`.
+
+### Files created
+| File | Purpose |
+|------|---------|
+| `examples/weather_station/firmware/platformio.ini` | PlatformIO project config, pinned lib_deps |
+| `examples/weather_station/firmware/include/pinmap.h` | All GPIO/address constants |
+| `examples/weather_station/firmware/src/main.cpp` | Non-blocking Arduino main, startup banner |
+| `examples/weather_station/firmware/src/components/bme280_1.h/.cpp` | BME280 driver (temp/humidity/pressure) |
+| `examples/weather_station/firmware/src/components/bh1750_1.h/.cpp` | BH1750 driver (ambient light) |
+| `examples/weather_station/firmware/src/components/display.h/.cpp` | SSD1306 OLED driver via U8g2 |
+
+### Build result — Attempt 1 of 3: **PASSED**
+```
+RAM:   7.1%  (23,232 / 327,680 bytes used)
+Flash: 23.4% (307,213 / 1,310,720 bytes used)
+```
+
+### Resolved library versions (PlatformIO)
+| Library | Requested | Resolved |
+|---------|-----------|---------|
+| Adafruit BME280 Library | `^2.2.4` | **2.3.0** |
+| BH1750 | `^1.3.0` | **1.3.0** |
+| U8g2 | `^2.35.19` | **2.36.18** |
+
+### Acceptance criteria
+- [x] All files have generated-by-PinPilot header comment
+- [x] No `delay()` in `loop()`
+- [x] `Wire.begin()` called exactly once before device `begin()` calls
+- [x] All GPIO/address constants in `pinmap.h`, no magic numbers
+- [x] Each component has `begin()` (presence check + Serial log) and `update()` (millis-based)
+- [x] OLED uses U8g2 (not LVGL — correct for SSD1306)
+- [x] Build passed in 1 attempt; RAM and flash well within budget
+
+### Open issues
+- None.
