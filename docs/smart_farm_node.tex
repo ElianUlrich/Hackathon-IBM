@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{tabularx}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds}
 \usepackage{listings}
@@ -67,38 +68,38 @@ Flash usage & 41.2\% \\
 ]
   % ESP32 centre
   \node[esp] (esp) {ESP32\\DevKit};
-  % Sensors — left column
-  \node[sensor, left=of esp, yshift=2.0cm] (soil) {soil\_1\\Soil Sensor};
-  \node[sensor, left=of esp, yshift=0.6cm] (ds)   {ds18b20\_1\\DS18B20};
-  \node[sensor, left=of esp, yshift=-0.8cm] (bme)  {bme280\_1\\BME280};
-  % Actuator — right top
-  \node[actuator, right=of esp, yshift=1.0cm] (relay) {relay\_1\\Relay};
-  % Display — right bottom
-  \node[display, right=of esp, yshift=-1.0cm] (tft) {ili9341\_1\\ILI9341 TFT};
-  % Arrows
-  \draw[arr] (soil.east)  -- node[above,font=\tiny]{ADC GPIO34}  (esp.west |- soil.east);
-  \draw[arr] (ds.east)    -- node[above,font=\tiny]{1-Wire GPIO4} (esp.west |- ds.east);
-  \draw[barr] (bme.east)  -- node[above,font=\tiny]{I2C GPIO21/22} (esp.west |- bme.east);
-  \draw[arr] (esp.east |- relay.west) -- node[above,font=\tiny]{GPIO26} (relay.west);
-  \draw[barr] (esp.east |- tft.west)  -- node[above,font=\tiny]{SPI GPIO18/19/23} (tft.west);
+  % Sensors — left column (absolute placement so anchors are reliable)
+  \node[sensor, left=3.5cm of esp, yshift= 2.2cm] (soil)  {soil\_1\\Soil Sensor};
+  \node[sensor, left=3.5cm of esp, yshift= 0.5cm] (ds)    {ds18b20\_1\\DS18B20};
+  \node[sensor, left=3.5cm of esp, yshift=-1.2cm] (bme)   {bme280\_1\\BME280};
+  % Actuator — right column
+  \node[actuator, right=3.5cm of esp, yshift= 1.0cm] (relay) {relay\_1\\Relay};
+  % Display — right column
+  \node[display,  right=3.5cm of esp, yshift=-1.0cm] (tft)   {ili9341\_1\\ILI9341 TFT};
+  % Arrows — each connects component anchor to the ESP32 box via |-
+  \draw[arr]  (soil.east)  -- node[above,font=\tiny]{ADC GPIO34}      (esp.west |- soil.east);
+  \draw[arr]  (ds.east)    -- node[above,font=\tiny]{1-Wire GPIO4}    (esp.west |- ds.east);
+  \draw[barr] (bme.east)   -- node[above,font=\tiny]{I2C GPIO21/22}   (esp.west |- bme.east);
+  \draw[arr]  (relay.west) -- node[above,font=\tiny]{GPIO26}          (esp.east |- relay.west);
+  \draw[barr] (tft.west)   -- node[above,font=\tiny]{SPI GPIO18/19/23}(esp.east |- tft.west);
 \end{tikzpicture}
 \end{center}
 
 \section{Component List}
 
-\begin{longtable}{llll}
+{\small
+\begin{tabularx}{\textwidth}{llll X}
 \toprule
-\textbf{Instance ID} & \textbf{Catalog Name} & \textbf{Interface} & \textbf{GPIO Summary} \\
+\textbf{Instance ID} & \textbf{Catalog Name} & \textbf{Iface} & \textbf{GPIO Summary} \\
 \midrule
-\endhead
-\bottomrule
-\endfoot
 soil\_1 & Capacitive Soil Moisture Sensor v1.2 & ADC & AOUT=34 \\
 ds18b20\_1 & DS18B20 & 1-Wire & DQ=4 \\
 bme280\_1 & BME280 & I2C 0x76 & SDA=21, SCL=22 \\
 relay\_1 & Relay Module (single channel, 5V coil) & GPIO & IN=26 \\
 ili9341\_1 & ILI9341 2.8" TFT (SPI) & SPI & MOSI=23, MISO=19, SCK=18, CS=27, DC=16, RESET=17 \\
-\end{longtable}
+\bottomrule
+\end{tabularx}
+}
 
 \section{Wiring Table}
 
@@ -111,17 +112,17 @@ ili9341\_1 & ILI9341 2.8" TFT (SPI) & SPI & MOSI=23, MISO=19, SCK=18, CS=27, DC=
 \endfoot
 soil\_1 & AOUT & 34 & Input-only. No internal pull-up or pull-down. ADC1 channel 6. \\
 \midrule
-ds18b20\_1 & DQ & 4 & ADC2 channel 0 --- unavailable when WiFi is active. \\
+ds18b20\_1 & DQ & 4 & ADC2 pin, used as digital I/O (WiFi restriction applies only to analog reads) \\
 \midrule
 bme280\_1 & SDA & 21 & Default I2C SDA. \\
 bme280\_1 & SCL & 22 & Default I2C SCL. \\
 \midrule
-relay\_1 & IN & 26 & ADC2 channel 9 --- unavailable when WiFi is active. DAC channel 2. \\
+relay\_1 & IN & 26 & ADC2 pin, used as digital I/O (WiFi restriction applies only to analog reads) \\
 \midrule
 ili9341\_1 & MOSI & 23 & Default VSPI MOSI. \\
 ili9341\_1 & MISO & 19 & Default VSPI MISO. \\
 ili9341\_1 & SCK & 18 & Default VSPI SCK. \\
-ili9341\_1 & CS & 27 & ADC2 channel 7 --- unavailable when WiFi is active. \\
+ili9341\_1 & CS & 27 & ADC2 pin, used as digital I/O (WiFi restriction applies only to analog reads) \\
 ili9341\_1 & DC & 16 & Default UART2 RX. Good general-purpose I/O. \\
 ili9341\_1 & RESET & 17 & Default UART2 TX. Good general-purpose I/O. \\
 \midrule
@@ -199,7 +200,7 @@ The coil requires 5V --- power from the DevKit's 5V (VIN) pin. Most modules are 
 
 \subsection{ili9341\_1 --- ILI9341 2.8" TFT (SPI)}
 
-Configure TFT\_eSPI exclusively through build\_flags in platformio.ini --- never edit files inside .pio/libdeps/. Required build flags: -D USER\_SETUP\_LOADED -D ILI9341\_DRIVER -D TFT\_MOSI=23 -D TFT\_SCLK=18 -D TFT\_CS=<pin> -D TFT\_DC=<pin> -D TFT\_RST=<pin> -D SPI\_FREQUENCY=40000000. Use LVGL v9 API only (NOT v8). Use a partial draw buffer (\~{}1/10 screen = 320*24*2 = \~{}15 KB).
+Configure TFT\_eSPI exclusively through build\_flags in platformio.ini --- never edit files inside .pio/libdeps/. Required build flags: \texttt{-D USER\_SETUP\_LOADED}\allowbreak{} \texttt{-D ILI9341\_DRIVER}\allowbreak{} \texttt{-D TFT\_MOSI=23}\allowbreak{} \texttt{-D TFT\_SCLK=18}\allowbreak{} \texttt{-D TFT\_CS=<pin>}\allowbreak{} \texttt{-D TFT\_DC=<pin>}\allowbreak{} \texttt{-D TFT\_RST=<pin>}\allowbreak{} \texttt{-D SPI\_FREQUENCY=40000000}\allowbreak{}. Use LVGL v9 API only (NOT v8). Use a partial draw buffer (\~{}1/10 screen = 320*24*2 = \~{}15 KB).
 
 \section{LVGL Dashboard Layout}
 
@@ -207,7 +208,8 @@ Driver: \texttt{ili9341}\quad Display instance: \texttt{ili9341\_1}
 
 Firmware built with \textbf{LVGL v9.2.2} (TFT\_eSPI back-end). RAM usage: \textbf{29.0\%}, Flash usage: \textbf{41.2\%}.
 
-\begin{longtable}{p{2.8cm}p{1.5cm}p{3.5cm}rrrrrr}
+{\small
+\begin{longtable}{p{2.8cm}p{1.3cm}p{4.2cm}rrrrrr}
 \toprule
 \textbf{Widget ID} & \textbf{Type} & \textbf{Binding} & \textbf{X} & \textbf{Y} & \textbf{W} & \textbf{H} & \textbf{Min} & \textbf{Max} \\
 \midrule
@@ -219,6 +221,7 @@ temp\_label & value & bme280\_1.temperature & 160 & 20 & — & — & — & — \
 soil\_temp\_label & value & ds18b20\_1.temperature & 160 & 80 & — & — & — & — \\
 moisture\_chart & chart & soil\_1.moisture & 0 & 160 & 320 & 70 & 0 & 100 \\
 \end{longtable}
+}
 
 \subsection{Dashboard Canvas (320\texttimes240)}
 

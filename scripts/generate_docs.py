@@ -6,6 +6,7 @@ Usage: python scripts/generate_docs.py <project.json> <output.tex>
 """
 
 import json
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -48,11 +49,23 @@ def load_json(path: Path) -> dict:
         return json.load(f)
 
 
-def gpio_notes(pin_table: dict, gpio: int) -> str:
+# Pins that are used as digital I/O even though their GPIO is an ADC2 channel.
+# For these the "unavailable when WiFi is active" note only applies to analog reads.
+_DIGITAL_PINS = {"DQ", "IN", "CS", "DC", "RESET", "SCK", "MOSI", "MISO"}
+
+_ADC2_DIGITAL_NOTE = (
+    "ADC2 pin, used as digital I/O "
+    "(WiFi restriction applies only to analog reads)"
+)
+
+def gpio_notes(pin_table: dict, gpio: int, pin_name: str = "") -> str:
     entry = pin_table.get(str(gpio))
-    if entry:
-        return latex_escape(entry["notes"])
-    return ""
+    if not entry:
+        return ""
+    flags = entry.get("flags", [])
+    if "adc2_wifi_conflict" in flags and pin_name.upper() in _DIGITAL_PINS:
+        return latex_escape(_ADC2_DIGITAL_NOTE)
+    return latex_escape(entry["notes"])
 
 
 def interface_label(comp: dict, catalog: dict) -> str:
@@ -111,6 +124,7 @@ def generate(project_path: Path, output_path: Path) -> None:
         r"\usepackage{graphicx}",
         r"\usepackage{booktabs}",
         r"\usepackage{longtable}",
+        r"\usepackage{tabularx}",
         r"\usepackage{tikz}",
         r"\usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds}",
         r"\usepackage{listings}",
@@ -195,20 +209,20 @@ def generate(project_path: Path, output_path: Path) -> None:
         r"]",
         r"  % ESP32 centre",
         r"  \node[esp] (esp) {ESP32\\DevKit};",
-        r"  % Sensors — left column",
-        r"  \node[sensor, left=of esp, yshift=2.0cm] (soil) {soil\_1\\Soil Sensor};",
-        r"  \node[sensor, left=of esp, yshift=0.6cm] (ds)   {ds18b20\_1\\DS18B20};",
-        r"  \node[sensor, left=of esp, yshift=-0.8cm] (bme)  {bme280\_1\\BME280};",
-        r"  % Actuator — right top",
-        r"  \node[actuator, right=of esp, yshift=1.0cm] (relay) {relay\_1\\Relay};",
-        r"  % Display — right bottom",
-        r"  \node[display, right=of esp, yshift=-1.0cm] (tft) {ili9341\_1\\ILI9341 TFT};",
-        r"  % Arrows",
-        r"  \draw[arr] (soil.east)  -- node[above,font=\tiny]{ADC GPIO34}  (esp.west |- soil.east);",
-        r"  \draw[arr] (ds.east)    -- node[above,font=\tiny]{1-Wire GPIO4} (esp.west |- ds.east);",
-        r"  \draw[barr] (bme.east)  -- node[above,font=\tiny]{I2C GPIO21/22} (esp.west |- bme.east);",
-        r"  \draw[arr] (esp.east |- relay.west) -- node[above,font=\tiny]{GPIO26} (relay.west);",
-        r"  \draw[barr] (esp.east |- tft.west)  -- node[above,font=\tiny]{SPI GPIO18/19/23} (tft.west);",
+        r"  % Sensors — left column (absolute placement so anchors are reliable)",
+        r"  \node[sensor, left=3.5cm of esp, yshift= 2.2cm] (soil)  {soil\_1\\Soil Sensor};",
+        r"  \node[sensor, left=3.5cm of esp, yshift= 0.5cm] (ds)    {ds18b20\_1\\DS18B20};",
+        r"  \node[sensor, left=3.5cm of esp, yshift=-1.2cm] (bme)   {bme280\_1\\BME280};",
+        r"  % Actuator — right column",
+        r"  \node[actuator, right=3.5cm of esp, yshift= 1.0cm] (relay) {relay\_1\\Relay};",
+        r"  % Display — right column",
+        r"  \node[display,  right=3.5cm of esp, yshift=-1.0cm] (tft)   {ili9341\_1\\ILI9341 TFT};",
+        r"  % Arrows — each connects component anchor to the ESP32 box via |-",
+        r"  \draw[arr]  (soil.east)  -- node[above,font=\tiny]{ADC GPIO34}      (esp.west |- soil.east);",
+        r"  \draw[arr]  (ds.east)    -- node[above,font=\tiny]{1-Wire GPIO4}    (esp.west |- ds.east);",
+        r"  \draw[barr] (bme.east)   -- node[above,font=\tiny]{I2C GPIO21/22}   (esp.west |- bme.east);",
+        r"  \draw[arr]  (relay.west) -- node[above,font=\tiny]{GPIO26}          (esp.east |- relay.west);",
+        r"  \draw[barr] (tft.west)   -- node[above,font=\tiny]{SPI GPIO18/19/23}(esp.east |- tft.west);",
         r"\end{tikzpicture}",
         r"\end{center}",
         "",
@@ -220,13 +234,11 @@ def generate(project_path: Path, output_path: Path) -> None:
     lines += [
         r"\section{Component List}",
         "",
-        r"\begin{longtable}{llll}",
+        r"{\small",
+        r"\begin{tabularx}{\textwidth}{llll X}",
         r"\toprule",
-        r"\textbf{Instance ID} & \textbf{Catalog Name} & \textbf{Interface} & \textbf{GPIO Summary} \\",
+        r"\textbf{Instance ID} & \textbf{Catalog Name} & \textbf{Iface} & \textbf{GPIO Summary} \\",
         r"\midrule",
-        r"\endhead",
-        r"\bottomrule",
-        r"\endfoot",
     ]
     for comp in project["components"]:
         cid     = comp["catalog_id"]
@@ -237,7 +249,9 @@ def generate(project_path: Path, output_path: Path) -> None:
         gsum    = gpio_summary(comp)
         lines.append(rf"{iid} & {cname} & {iface} & {gsum} \\")
     lines += [
-        r"\end{longtable}",
+        r"\bottomrule",
+        r"\end{tabularx}",
+        r"}",
         "",
     ]
 
@@ -259,7 +273,7 @@ def generate(project_path: Path, output_path: Path) -> None:
         iid = latex_escape(comp["instance_id"])
         for pin_name, gpio in comp.get("pin_mapping", {}).items():
             pname = latex_escape(pin_name)
-            notes = gpio_notes(pin_table, gpio)
+            notes = gpio_notes(pin_table, gpio, pin_name)
             lines.append(rf"{iid} & {pname} & {gpio} & {notes} \\")
         lines.append(r"\midrule")
     lines += [
@@ -356,12 +370,21 @@ def generate(project_path: Path, output_path: Path) -> None:
         notes = cat.get("notes", "").strip()
         if not notes:
             continue
-        iid = latex_escape(comp["instance_id"])
+        iid   = latex_escape(comp["instance_id"])
         cname = latex_escape(cat["name"])
+        # Escape first, then wrap -D FLAG=value sequences in \texttt so they
+        # don't overflow the margin.  After latex_escape, underscores become \\_
+        # so we match that form too.
+        escaped = latex_escape(notes)
+        escaped = re.sub(
+            r"(-D (?:[A-Za-z0-9]|\\_|[=<>])+)",
+            lambda m: r"\texttt{" + m.group(1) + r"}\allowbreak{}",
+            escaped
+        )
         lines += [
             rf"\subsection{{{iid} --- {cname}}}",
             "",
-            latex_escape(notes),
+            escaped,
             "",
         ]
 
@@ -379,7 +402,8 @@ def generate(project_path: Path, output_path: Path) -> None:
             r"Firmware built with \textbf{LVGL v9.2.2} (TFT\_eSPI back-end). "
             r"RAM usage: \textbf{29.0\%}, Flash usage: \textbf{41.2\%}.",
             "",
-            r"\begin{longtable}{p{2.8cm}p{1.5cm}p{3.5cm}rrrrrr}",
+            r"{\small",
+            r"\begin{longtable}{p{2.8cm}p{1.3cm}p{4.2cm}rrrrrr}",
             r"\toprule",
             r"\textbf{Widget ID} & \textbf{Type} & \textbf{Binding} & "
             r"\textbf{X} & \textbf{Y} & \textbf{W} & \textbf{H} & \textbf{Min} & \textbf{Max} \\",
@@ -401,7 +425,7 @@ def generate(project_path: Path, output_path: Path) -> None:
             lines.append(
                 rf"{wid} & {wtype} & {binding} & {x} & {y} & {width} & {height} & {wmin} & {wmax} \\"
             )
-        lines += [r"\end{longtable}", ""]
+        lines += [r"\end{longtable}", r"}", ""]
 
         # ASCII-art representation of the 320x240 canvas
         lines += [
